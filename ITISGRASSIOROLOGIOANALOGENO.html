@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="it">
+<head>
+<title>Orologio</title>
+<script type="text/javascript">
+function cambia_ora(){
+d = new Date();
+// Estrae le ore, i minuti e i secondi
+h = d.getHours();
+m = d.getMinutes();
+s = d.getSeconds();
+ms = d.getMilliseconds();
+s += ms/1000;
+m += s/60;
+h += m/60;
+var canvas = document.getElementById("mioCanvas");
+var context = canvas.getContext("2d");
+// Disegna il quadrante
+context.beginPath();
+context.arc(200, 200, 150, 0, 2 * Math.PI, false);
+context.closePath();
+context.fillStyle = "#EEEEFF";
+context.fill();
+context.lineWidth = 1;
+context.strokeStyle = "#000055";
+context.stroke();
+// Lancetta dei secondi
+var Sangolo = s * Math.PI / 30;
+var Sx = 200 + 140 * Math.sin(Sangolo);
+var Sy = 200 - 140 * Math.cos(Sangolo);
+context.beginPath();
+context.moveTo(200 + 75 * Math.sin(Sangolo), 200 - 75 * Math.cos(Sangolo));
+context.lineTo(Sx, Sy);
+context.closePath();
+context.lineWidth = 1;
+context.stroke();
+
+// Lancetta dei minuti
+var Mangolo = m * Math.PI / 30;
+var Mx = 200 + 145 * Math.sin(Mangolo);
+var My = 200 - 145 * Math.cos(Mangolo);
+context.beginPath();
+context.moveTo(200, 200);
+context.lineTo(Mx, My);
+context.closePath();
+context.lineWidth = 3;
+context.stroke();
+// Lancetta delle ore
+var Hangolo = h * Math.PI / 6;
+var Hx = 200 + 100 * Math.sin(Hangolo);
+var Hy = 200 - 100 * Math.cos(Hangolo);
+context.beginPath();
+context.moveTo(200, 200);
+context.lineTo(Hx, Hy);
+context.closePath();
+context.lineWidth = 5;
+context.stroke();
+// Scrive il numero 12 in alto al centro
+context.font = "32pt Arial";
+context.strokeText("12", 171, 100);
+// L'orologio si aggiorna ogni 25 millisecondi
+setTimeout("cambia_ora()", 25);
+}
+</script>
+</head>
+<body onload="cambia_ora()">
+<canvas id="mioCanvas" width="400" height="400">
+
+</canvas>
+</body>
+</html>
+
