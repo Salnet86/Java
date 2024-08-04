@@ -1,0 +1,37 @@
+main' method must be in a class 'Rextester'.
+//openjdk version '11.0.5' 
+
+import java.util.*;
+import java.lang.*;
+
+class Rextester
+{  
+    public static void main(String args[])
+    {
+        //System.out.println("Hello, World!");
+
+        int d=12;
+        int x=0;
+        int m=0;
+        int z=0;
+      String out="";
+       while(d>0){
+       
+        
+         
+         x=d;
+         d/=2;
+         m=d*2;
+         z=x-m;
+        if(z==0){
+    System.out.println("the multiple of a number is. :"+d);
+} else{
+System.out.println("not is multiple try sorry thank. " +d);
+       } 
+
+      } 
+
+
+
+    }
+}

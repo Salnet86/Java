@@ -1,0 +1,45 @@
+e stai inviando l'e-mail utilizzando l'API JavaMail, carica i due file jar:
+mail.jar
+attivazione.jar
+scarica questi file jar o vai al sito Oracle per scaricare la versione più recente.
+importare java.util.Properties;
+importa javax.mail.*;
+importa javax.mail.internet.*;
+
+classe pubblica SendMailBySite {
+public static void main(String[] args) {
+
+String host= "mail.javatpoint.com" ;
+utente finale della stringa = "sonodonna@javatpoint.com" ; //cambia di conseguenza
+final String password= "xxxxx" ; //cambia di conseguenza
+
+Stringa a = "sonodonna@gmail.com" ; //cambia di conseguenza
+
+//Ottiene l'oggetto della sessione
+Oggetti di proprietà = nuove Proprietà();
+props.put( "mail.smtp.host" , host);
+props.put( "mail.smtp.auth" , "true" );
+
+Sessione sessione = Session.getDefaultInstance(props,
+nuovo javax.mail.Authenticator() {
+protetta PasswordAuthentication getPasswordAuthentication() {
+restituisce nuova PasswordAuthentication(utente,password);
+}
+});
+
+//Comporre il messaggio
+prova {
+Messaggio MimeMessage = nuovo MimeMessage(sessione);
+message.setFrom( nuovo indirizzoInternet(utente));
+message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+messaggio.setSubject( "javatpoint" );
+message.setText( "Questo è un semplice programma per inviare e-mail utilizzando l'API JavaMail" );
+
+//invia il messaggio
+Transport.send(messaggio);
+
+System.out.println( "messaggio inviato con successo..." );
+
+} catch (MessagingException e) {e.printStackTrace();}
+}
+}
