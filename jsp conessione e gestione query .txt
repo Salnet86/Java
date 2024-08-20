@@ -1,0 +1,189 @@
+<%@page import="javax.swing.text.StyledEditorKit.BoldAction"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<style>
+* {
+	margin: 0 auto;
+}
+
+#container {
+	width: 400px;
+	height: 200px;
+	text-align: center;
+	margin-top: 20px;
+}
+
+#tabellaUno {
+	border: 1px solid #aaa;
+	margin-top: 20px;
+}
+
+tr,td {
+	border: 1px solid #aaa;
+}
+
+.btn {
+	margin-top: 10px;
+	float: right;
+	cursor: pointer;
+	margin-right: 50px;
+}
+
+#ButIndietro {
+	margin-right: 5px;
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<script>
+			function myFunction() {
+				location.href = "cerca.jsp";
+			}
+		</script>
+
+	<%@ page language="java" import="java.sql.*"%>
+	<%@ page language="java" import="conessione.DbConnection"%>
+
+	<%
+		DbConnection connessione = new DbConnection();
+		Connection con = connessione.connetti();
+
+		Statement st = null;
+		ResultSet rs = null;
+
+		String codice_corso = request.getParameter("cod_corso");
+		String nome_utente = request.getParameter("nome_utente");
+		String cognome_utente = request.getParameter("cognome_utente");
+
+		/* String utente_cod_corso = "utente." + codice_corso;
+		String corso_cod_corso = "corso." + codice_corso;
+		out.print("fff = " + codice_corso);
+		out.print("aaa = " + utente_cod_corso);
+		out.println();
+		out.print("ccc = " + corso_cod_corso); */
+		try {
+			st = con.createStatement();
+			rs = st.executeQuery("SELECT utente.id, utente.datacompilazione, utente.nome,"
+					+ " utente.cognome,utente.statooccupazione, utente.user,utente.pass, corso.titolocorso "
+					+ " FROM corso,utente  where corso.codicecorso = '"
+					+ codice_corso
+					+ "' AND utente.codicecorso = '"
+					+ codice_corso
+					+ "' AND utente.nome = '"
+					+ nome_utente+ "' AND utente.cognome = '"+ cognome_utente
+					+ "'  ");
+			//rs = st.executeQuery("SELECT * FROM utente,corso where corso.codicecorso = utente_cod_corso");
+			//rs = st.executeQuery("SELECT * FROM utente,corso where corso.codicecorso = '"+utente_cod_corso+"'");
+			//rs = st.executeQuery("SELECT * FROM utente,corso where '"+ corso_cod_corso + "' = '" + utente_cod_corso + "' ");
+			//rs = st.executeQuery("SELECT * FROM utente,corso where '"+corso_cod_corso+"' = utente.codice_corso ");
+
+			int id = 0;
+			String datacompilazione = "";
+			String nome = "";
+			String cognome = "";
+			boolean statooccupazionale = false;
+			String user = "";
+			String pass = "";
+			String titolo = "";
+
+			out.println("<h1>ELENCO UTENTE:</h1>");
+
+			out.println("<div id=\"container\">");
+			out.println("<h1>Risultato ricerca</h1>");
+			out.println("<section>");
+
+			out.println("<table id=\"tabellaUno\">");
+			out.println("<tr>");
+			out.println("<td>nome</td>");
+			out.println("<td>cognome</td>");
+			out.println("<td>codice corso</td>");
+			out.println("<td>titolo corso</td>");
+			out.println("</tr>");
+
+			while (rs.next()) {
+
+				id = rs.getInt(1);
+				datacompilazione = rs.getString(2);
+				nome = rs.getString(3);
+				cognome = rs.getString(4);
+				statooccupazionale = rs.getBoolean(5);
+				user = rs.getString(6);
+				pass = rs.getString(7);
+				titolo = rs.getString(8);
+
+				out.println("<tr>");
+				out.println("<td>" + nome + "</td>");
+				out.println("<td>" + cognome + "</td>");
+				out.println("<td>" + codice_corso + "</td>");
+				out.println("<td>" + titolo + "</td>");
+				out.println("</tr>");
+
+			}
+			out.println("</table>");
+			out.println("<input type=\"submit\" value=\"invia modulo\" class=\"btn\">");
+			out.println("<input type=\"submit\" value=\"indietro\" class=\"btn\" id=\"ButIndietro\" onclick=\"myFunction()\">");
+			out.println("</section>");
+			out.println("</div>");
+			connessione.liberaRisorse(con, st, rs);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	%>
+
+</body>
+</html>
+--------------------------------------------------------------------------------------
+package conessione;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DbConnection {
+	protected String DRIVER = "com.mysql.jdbc.Driver";
+	protected String url = "jdbc:mysql://localhost:3306/questionario";
+	protected String user = "root";
+	protected String psw = "";
+
+	public Connection connetti() {
+
+		Connection con = null;
+
+		try {
+			Class.forName(DRIVER);
+			con = DriverManager.getConnection(url, user, psw);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return con;
+
+	}
+
+	public void liberaRisorse(Connection con, Statement st, ResultSet rs) {
+
+		try {
+			rs.close();
+			st.close();
+			con.close();
+		}
+
+		catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+}
+
