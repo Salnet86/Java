@@ -1,0 +1,31 @@
+String[][]matrix= {
+		   {"salvatore","brezzz"},
+		   {"salvatore","brezza"},
+		   {"salvatore","brezza"}
+		   };
+ 
+
+//     for(int i=0;i<m.length;i++){
+//     	for(int j=0;j<m[i].length;j++){
+    		
+//     		out.println(m[i][j]);
+//     	}
+    
+//     }
+
+
+
+String[][]m= {
+		   {"salvatore","brezzz"},
+		   {"maurizzo","barone"},
+		   {"mauri","perone"}
+		   };
+ 
+
+     for(int i=0;i<m.length;i++){
+   	for(int j=0;j<m.length-1;j++){
+    		
+    		out.println(m[i][j]);
+   	}
+    
+    }
