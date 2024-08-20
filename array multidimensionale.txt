@@ -1,7 +1,7 @@
 String[][]matrix= {
-		   {"salvatore","brezzz"},
-		   {"salvatore","brezza"},
-		   {"salvatore","brezza"}
+		   {"limone","fragole"},
+		   {"pere","meloni"},
+		   {"pere","mele"}
 		   };
  
 
@@ -16,9 +16,9 @@ String[][]matrix= {
 
 
 String[][]m= {
-		   {"salvatore","brezzz"},
-		   {"maurizzo","barone"},
-		   {"mauri","perone"}
+		   {"zucchine","insalata"},
+		   {"spinaci","pomodori"}
+		   
 		   };
  
 
