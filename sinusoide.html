@@ -1,0 +1,39 @@
+<html>
+    <head>
+    </head>
+
+    <body>
+        <canvas id="myCanvas" width="400" height="400"></canvas>
+
+        <script>
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+
+            // Set stroke color and width
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+
+            // Draw the base lines
+            for (var i = 0; i < 360; i += 20) {
+                ctx.moveTo(i + 5, 180);
+                ctx.lineTo(i, 180);
+            }
+            ctx.stroke();
+
+            var counter = 0, x = 0, y = 120;
+            var amplitude = 50;  // Amplitude of the sine wave
+            var frequency = 5 * Math.PI / 120; // Frequency to control wave repetition
+
+            // 100 iterations
+            for (i = 0; i <= 360; i += 10) {
+                ctx.moveTo(x, y);
+                x = i;
+                y = 120 - Math.sin(counter) * amplitude; // Adjust amplitude to scale the wave
+                counter += frequency;
+
+                ctx.lineTo(x, y);
+                ctx.stroke();  // Move stroke inside the loop for immediate rendering
+            }
+        </script>
+    </body>
+</html>

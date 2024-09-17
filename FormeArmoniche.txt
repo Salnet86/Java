@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Furies Sinusoidal</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Furies Sinusoidal</h1>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+    <script>
+        function drawWave() {
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+
+            var K_max = 400;
+            var x = 0, y = 200; // Starting coordinates (centered vertically)
+            var frequenza = 100; // Frequency in Hz
+            var W = 2 * Math.PI * frequenza / K_max; // Angular frequency (rad/s)
+
+            ctx.clearRect(0, 0, c.width, c.height); // Clear canvas before drawing
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+
+            // Draw the sine waves
+            for (var i = 1; i <= K_max; i++) {
+                var k = 2 * i - 1; // Odd harmonics
+                var wave = (4 / (k * Math.PI)) * Math.sin(k * W * i); // Sine wave calculation
+
+                x = i * 1; // Adjust x spacing
+                y = 200 + wave * 100; // Centered vertically and scaled
+                
+                ctx.lineTo(x, y);
+            }
+
+            ctx.stroke();
+        }
+
+        drawWave(); // Initial draw
+    </script>
+</body>
+</html>
