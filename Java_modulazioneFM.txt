@@ -1,0 +1,51 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+
+public class FMSignalPlotter extends JPanel {
+    private final int WIDTH = 800;
+    private final int HEIGHT = 400;
+    private final double A_c = 5.0; // Ampiezza portante
+    private final double A_m = 2.0; // Ampiezza segnale modulante
+    private final double f_c = 1000; // Frequenza portante (Hz)
+    private final double f_m = 100; // Frequenza segnale modulante (Hz)
+    private final double sampleRate = 8000; // Frequenza di campionamento (Hz)
+    
+    public FMSignalPlotter() {
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+    }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = image.createGraphics();
+        
+        // Disegna il segnale FM
+        for (int i = 0; i < WIDTH; i++) {
+            double t = (double) i / sampleRate; // Tempo
+            double m_t = A_m * Math.sin(2 * Math.PI * f_m * t); // Segnale modulante
+            double s_t = A_c * Math.cos(2 * Math.PI * f_c * t + m_t); // Segnale modulato
+
+
+            int y = (int) (HEIGHT / 2 - s_t * 20); // Scala il segnale per il disegno
+            image.setRGB(i, y, Color.RED.getRGB()); // Colore rosso per il segnale FM
+        }
+        
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+    }
+
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("FM Signal Plotter");
+        FMSignalPlotter plotter = new FMSignalPlotter();
+        frame.add(plotter);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+
