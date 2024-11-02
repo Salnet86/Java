@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <style>
+        body {
+            background-color: #f0f8ff; /* Colore di sfondo */
+            color: #333; /* Colore del testo */
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        #description {
+            background-color: #e7ffe7; /* Colore di sfondo del div descrittivo */
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #send {
+            background-color: #28a745; /* Colore del pulsante */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #send:hover {
+            background-color: #218838; /* Colore al passaggio del mouse */
+        }
+        #messages {
+            border: 1px solid #ccc; /* Bordo per il div dei messaggi */
+            border-radius: 5px;
+            padding: 10px;
+            max-height: 300px; /* Altezza massima */
+            overflow-y: auto; /* Scorrimento verticale */
+            background-color: #ffffff; /* Colore di sfondo dei messaggi */
+        }
+        input[type="text"] {
+            width: calc(100% - 22px); /* Larghezza del campo di input */
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        @media (max-width: 600px) {
+            #messages {
+                height: 200px; /* Altezza per schermi piccoli */
+            }
+        }
+    </style>
+</head>
+<body>
+    <marquee>Chat Room</marquee>
+    <h1 style="color: #28a745;">ITIS GRASSI INFORMATICA</h1>
+    
+    <div id="description">
+        <h2>Come funziona il codice</h2>
+        <p>
+            Questo codice implementa una semplice chat room utilizzando WebSocket. Gli utenti possono inserire il proprio nome e inviare messaggi.
+            <br>
+            **Nota Importante**: Attualmente, il sistema funziona solo su un singolo client poiché si connette a un servizio di echo. 
+            Questo significa che i messaggi inviati vengono restituiti solo al mittente e non possono essere visualizzati da altri utenti.
+            <br>
+            Per implementare una chat multiutente, è necessario utilizzare un server WebSocket personalizzato che gestisca le comunicazioni tra più client.
+        </p>
+        <p>
+            Questo è stato un semplice progetto realizzato da <strong>Platania Salvatore</strong> e <strong>Giulia</strong>.
+        </p>
+    </div>
+
+    <input id="username" type="text" placeholder="Inserisci il tuo nome..." />
+    <div id="messages"></div>
+    <input id="input" type="text" placeholder="Scrivi un messaggio..." />
+    <button id="send">Invia</button>
+
+    <script>
+        // Creazione di un WebSocket per connettersi al server
+        const socket = new WebSocket('wss://echo.websocket.org');
+        const messagesDiv = document.getElementById('messages');
+        const input = document.getElementById('input');
+        const usernameInput = document.getElementById('username');
+        const sendButton = document.getElementById('send');
+
+        // Gestione dei messaggi ricevuti
+        socket.onmessage = function(event) {
+            // Ignora i messaggi di echo
+            if (!event.data.includes("Request served by")) {
+                const messageElement = document.createElement('div');
+                messageElement.textContent = event.data; // Mostra il messaggio
+                messagesDiv.appendChild(messageElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scorri fino in fondo
+            }
+        };
+
+        // Invia messaggi quando si clicca il pulsante
+        sendButton.onclick = function() {
+            const message = input.value;
+            const username = usernameInput.value || 'Anonimo';
+            if (message) {
+                socket.send(`${username}: ${message}`); // Invia il messaggio
+                input.value = ''; // Pulisci il campo di input
+            }
+        };
+
+        // Invia messaggi premendo "Enter"
+        input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+</html>
