@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galleria di Immagini</title>
+    <style>
+        /* Stile del contenitore dello scroll */
+        .scroll-container {
+            width: 600px; /* Imposta la larghezza del contenitore per limitare la visibilità */
+            height: 300px; /* Imposta l'altezza del contenitore */
+            overflow: hidden; /* Rimuove la barra di scorrimento visibile */
+            position: relative;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        /* Contenitore per le immagini che scorrono */
+        .image-container {
+            display: flex; /* Dispone le immagini orizzontalmente */
+            transition: transform 0.3s ease-in-out; /* Animazione per lo scorrimento */
+        }
+
+        /* Le immagini si adattano al loro contenitore */
+        img {
+            width: 600px; /* Ogni immagine avrà la stessa larghezza del contenitore */
+            height: 300px; /* L'altezza dell'immagine è quella del contenitore */
+            object-fit: cover; /* Mantiene le proporzioni delle immagini e le adatta */
+        }
+
+        /* Stile per i pulsanti */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container" id="scrollcontainer">
+        <!-- Contenitore delle immagini che scorrono -->
+        <div class="image-container" id="imageContainer">
+            <img src="https://via.placeholder.com/600x300/FF5733/FFFFFF?text=Immagine+1" alt="Immagine 1">
+            <img src="https://via.placeholder.com/600x300/33FF57/FFFFFF?text=Immagine+2" alt="Immagine 2">
+            <img src="https://via.placeholder.com/600x300/3357FF/FFFFFF?text=Immagine+3" alt="Immagine 3">
+            <img src="https://via.placeholder.com/600x300/FFFF33/FFFFFF?text=Immagine+4" alt="Immagine 4">
+            <img src="https://via.placeholder.com/600x300/FF33FF/FFFFFF?text=Immagine+5" alt="Immagine 5">
+            <img src="https://via.placeholder.com/600x300/33FFFF/FFFFFF?text=Immagine+6" alt="Immagine 6">
+            <img src="https://via.placeholder.com/600x300/FF33B5/FFFFFF?text=Immagine+7" alt="Immagine 7">
+        </div>
+    </div>
+
+    <button id="backbtn">Indietro</button>
+    <button id="nextbtn">Avanti</button>
+
+    <script>
+        // Riferimenti agli elementi
+        const nextbtn = document.getElementById("nextbtn");
+        const backbtn = document.getElementById("backbtn");
+        const imageContainer = document.getElementById("imageContainer");
+        const totalImages = document.querySelectorAll(".image-container img").length;
+        let currentIndex = 0; // Iniziamo dalla prima immagine
+
+        // Funzione per scorrere a destra
+        nextbtn.addEventListener("click", () => {
+            if (currentIndex < totalImages - 1) {
+                currentIndex++; // Aumenta l'indice per scorrere verso destra
+                imageContainer.style.transform = `translateX(-${600 * currentIndex}px)`; // Muove le immagini
+            }
+        });
+
+        // Funzione per scorrere a sinistra
+        backbtn.addEventListener("click", () => {
+            if (currentIndex > 0) {
+                currentIndex--; // Diminuisci l'indice per scorrere verso sinistra
+                imageContainer.style.transform = `translateX(-${600 * currentIndex}px)`; // Muove le immagini
+            }
+        });
+    </script>
+
+</body>
+</html>
