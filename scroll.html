@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scroll Immagine</title>
+<style>
+/* Stile del contenitore */
+.container {
+width: 100%; /* Adatta alla larghezza dello schermo */
+max-width: 900px; /* Impostiamo un limite massimo di larghezza */
+overflow: hidden;
+border: 2px solid black;
+margin: 0 auto; /* Per centrare la galleria */
+}
+
+/* Stile delle immagini e contenitore */
+.image {
+width: 300%; /* Tre immagini visibili */
+display: flex;
+transition: transform 0.3s ease-in-out;
+}
+
+/* Ogni immagine avrà una larghezza di 33.33% per fare in modo che siano affiancate */
+img {
+width: 33.33%;
+height: 200px;
+object-fit: cover;
+}
+
+/* Pulsanti di scroll */
+button {
+font-size: 24px;
+background-color: rgba(0, 0, 0, 0.5);
+color: white;
+border: none;
+padding: 10px;
+cursor: pointer;
+z-index: 10;
+}
+
+/* Posiziona i pulsanti a sinistra e destra */
+button:first-of-type {
+position: absolute;
+left: 10px;
+top: 50%;
+transform: translateY(-50%);
+}
+
+button:last-of-type {
+position: absolute;
+right: 10px;
+top: 50%;
+transform: translateY(-50%);
+}
+</style>
+</head>
+<body>
+
+<!-- Pulsanti per lo scroll -->
+<button onclick="scrollLeft()">◀️</button>
+<button onclick="scrollRight()">▶️</button>
+
+<!-- Contenitore delle immagini -->
+<div class="container">
+<div class="image" id="imageContainer">
+<img src="https://via.placeholder.com/300x200/ff0000/ffffff?text=1" alt="Immagine 1">
+<img src="https://via.placeholder.com/300x200/00ff00/ffffff?text=2" alt="Immagine 2">
+<img src="https://via.placeholder.com/300x200/0000ff/ffffff?text=3" alt="Immagine 3">
+</div>
+</div>
+
+<script>
+let scroll = 0;
+let size = 300; // Sposta di 300px per volta
+let maxScroll = 600; // 3 immagini da 300px
+
+function scrollLeft() {
+scroll -= size;
+if (scroll < 0) scroll = 0; // Evita di uscire dai limiti
+document.getElementById("imageContainer").style.transform = `translateX(-${scroll}px)`;
+}
+
+function scrollRight() {
+scroll += size;
+if (scroll > maxScroll) scroll = maxScroll; // Evita di superare l'ultima immagine
+document.getElementById("imageContainer").style.transform = `translateX(-${scroll}px)`;
+}
+</script>
+
+</body>
+</html>
