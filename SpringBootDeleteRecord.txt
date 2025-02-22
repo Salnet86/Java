@@ -1,0 +1,120 @@
+@Entity
+public class Record {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    
+    // getters and setters
+}
+
+
+
+
+
+
+@Repository
+public interface RecordRepository extends JpaRepository<Record, Long> {
+}
+
+
+
+
+
+
+
+@Controller
+public class RecordController {
+
+@Autowired
+private RecordRepository recordRepository;
+
+@GetMapping("/")
+public String viewRecords(Model model) {
+List<Record> records = recordRepository.findAll();
+model.addAttribute("records", records);
+return "index";
+}
+
+@PostMapping("/delete")
+public String deleteRecord(@RequestParam("id") Long id) {
+recordRepository.deleteById(id);
+return "redirect:/";
+}
+}
+
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Record List</title>
+</head>
+<body>
+<h1>Record List</h1>
+<form th:action="@{/delete}" method="post">
+<table border="1">
+<thead>
+<tr>
+<th>Choose</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="record : ${records}">
+<td>
+<input type="radio" th:name="id" th:value="${record.id}" />
+</td>
+<td th:text="${record.name}"></td>
+</tr>
+</tbody>
+</table>
+<button type="submit">Delete Selected</button>
+</form>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
+
+
+
+
+<dependencies>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+<groupId>com.h2database</groupId>
+<artifactId>h2</artifactId>
+<scope>runtime</scope>
+</dependency>
+</dependencies>
+
+
+
+
