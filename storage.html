@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione File con LocalStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #fileInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        li button {
+            background-color: #2196F3;
+            margin-right: 10px;
+        }
+
+        li button:hover {
+            background-color: #0b7dda;
+        }
+
+        .delete-link {
+            color: #f44336;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gestione File con LocalStorage</h1>
+        
+        <!-- Input per caricare un file -->
+        <input type="file" id="fileInput" />
+        <button onclick="handleFileUpload()">Carica e Salva</button>
+
+        <div id="alert" class="alert">Errore: Nessun file selezionato o errore nel salvataggio!</div>
+
+        <h3>File salvati:</h3>
+        <!-- Elenco dei file salvati -->
+        <ul id="fileList"></ul>
+    </div>
+
+    <script>
+        // Funzione per salvare il file nel localStorage
+        function saveFileToLocalStorage(file) {
+            if (!file) {
+                showAlert("Seleziona un file prima di salvarlo.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    // Salva il file nel localStorage
+                    localStorage.setItem(file.name, event.target.result);
+                    updateFileList();
+                    alert("File salvato nel localStorage!");
+                } catch (e) {
+                    showAlert("Errore nel salvataggio! Forse localStorage è pieno.");
+                    console.error(e);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Funzione per caricare il file dal localStorage
+        function loadFileFromLocalStorage(fileName) {
+            const fileData = localStorage.getItem(fileName);
+            if (fileData) {
+                const link = document.createElement("a");
+                link.href = fileData;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                showAlert("Nessun file trovato nel localStorage!");
+            }
+        }
+
+        // Funzione per aggiornare l'elenco dei file salvati
+        function updateFileList() {
+            const fileListContainer = document.getElementById("fileList");
+            fileListContainer.innerHTML = "";  // Svuota la lista prima di aggiornarla
+            for (let i = 0; i < localStorage.length; i++) {
+                const fileName = localStorage.key(i);  // Ottieni il nome del file
+                const listItem = document.createElement("li");
+                listItem.textContent = fileName;
+
+                // Crea il link per scaricare il file
+                const downloadButton = document.createElement("button");
+                downloadButton.textContent = "Scarica";
+                downloadButton.onclick = function() {
+                    loadFileFromLocalStorage(fileName);
+                };
+
+                // Crea il link per cancellare il file
+                const deleteLink = document.createElement("a");
+                deleteLink.href = "#";
+                deleteLink.textContent = "Cancella";
+                deleteLink.className = "delete-link";
+                deleteLink.onclick = function() {
+                    deleteFile(fileName);
+                };
+
+                // Aggiungi i bottoni e il nome del file alla lista
+                listItem.appendChild(downloadButton);
+                listItem.appendChild(deleteLink);
+                fileListContainer.appendChild(listItem);
+            }
+        }
+
+        // Funzione per eliminare un file dal localStorage
+        function deleteFile(fileName) {
+            if (confirm("Sei sicuro di voler eliminare il file?")) {
+                localStorage.removeItem(fileName);
+                updateFileList();  // Ricarica l'elenco dopo la cancellazione
+                alert("File cancellato!");
+            }
+        }
+
+        // Funzione per gestire l'upload del file
+        function handleFileUpload() {
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];  // Ottieni il file selezionato
+            if (file) {
+                saveFileToLocalStorage(file);  // Salva il file nel localStorage
+            } else {
+                showAlert("Seleziona un file prima di caricarlo.");
+            }
+        }
+
+        // Funzione per mostrare un messaggio di errore
+        function showAlert(message) {
+            const alertDiv = document.getElementById("alert");
+            alertDiv.textContent = message;
+            alertDiv.style.display = "block";
+            setTimeout(function() {
+                alertDiv.style.display = "none";
+            }, 3000);  // Nascondi il messaggio dopo 3 secondi
+        }
+
+        // Carica la lista dei file salvati quando la pagina si carica
+        window.onload = updateFileList;
+
+    </script>
+
+</body>
+</html>
