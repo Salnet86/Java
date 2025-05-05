@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pallina che rimbalza sui muri</title>
+<style>
+canvas {
+background: #fff;
+display: block;
+margin: auto;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas1" width="800" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas1');
+const ctx = canvas.getContext('2d');
+
+// Definizione del labirinto (1 = muro, 0 = spazio libero)
+const labirinto = [
+"1111111111",
+"1000000001",
+"1011101111",
+"1000000001",
+"1111111111"
+];
+
+const cellSize = 50; // Dimensione di ogni cella del labirinto
+
+// La pallina
+let ball = {
+x: 100,
+y: 100,
+radius: 10,
+dx: 2, // velocità orizzontale
+dy: 2, // velocità verticale
+color: 'blue'
+};
+
+// Funzione per disegnare il labirinto
+function disegnaLabirinto() {
+ctx.clearRect(0, 0, canvas.width, canvas.height); // Pulisce il canvas
+
+// Disegna il labirinto
+for (let i = 0; i < labirinto.length; i++) {
+for (let j = 0; j < labirinto[i].length; j++) {
+if (labirinto[i][j] === '1') {
+// Disegna il muro (rettangolo grigio)
+ctx.fillStyle = 'blue';
+ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+}
+}
+}
+}
+
+// Funzione per disegnare la pallina
+function disegnaPallina() {
+ctx.beginPath();
+ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2); // Disegna la pallina
+ctx.fillStyle = ball.color;
+ctx.fill();
+ctx.closePath();
+}
+
+// Funzione per muovere la pallina
+function muoviPallina() {
+ball.x += ball.dx;
+ball.y += ball.dy;
+
+// Controlla se la pallina tocca un muro (colpisce il muro orizzontale o verticale)
+const colonna = Math.floor(ball.x / cellSize);
+const riga = Math.floor(ball.y / cellSize);
+
+// Se la pallina tocca un muro, rimbalza
+if (labirinto[riga] && labirinto[riga][colonna] === '1') {
+// Rimbalza orizzontalmente
+if (ball.dx > 0) {
+ball.x = colonna * cellSize - ball.radius; // Riprova da sinistra
+} else {
+ball.x = (colonna + 1) * cellSize + ball.radius; // Riprova da destra
+}
+
+// Rimbalza verticalmente
+if (ball.dy > 0) {
+ball.y = riga * cellSize - ball.radius; // Riprova dall'alto
+} else {
+ball.y = (riga + 1) * cellSize + ball.radius; // Riprova dal basso
+}
+
+// Inverti la direzione della pallina
+ball.dx = -ball.dx;
+ball.dy = -ball.dy;
+}
+}
+
+// Funzione principale per il loop del gioco
+function loop() {
+disegnaLabirinto(); // Disegna il labirinto
+disegnaPallina(); // Disegna la pallina
+muoviPallina(); // Muove la pallina
+
+requestAnimationFrame(loop); // Chiamata ricorsiva per continuare il gioco
+}
+
+// Avvia il gioco
+loop();
+</script>
+
+</body>
+</html>

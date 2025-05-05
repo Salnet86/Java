@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labirinto con Pallina</title>
+    <style>
+        canvas {
+            background: #fff;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="800" height="500"></canvas>
+
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const cellSize = 50; // Dimensione della cella
+    let ball = { x: 400, y: 250, radius: 10, dx: 2, dy: 2 };
+
+
+    // Labirinto come stringa (1 = muro, 0 = spazio libero)
+    const labirinto = [
+        "11111111111111111",
+        "10000000011100001",
+        "10111010111100001",
+        "10000000011111001",
+        "11111111111111111"
+    ];
+
+
+    // Funzione per disegnare il labirinto
+    function disegnaLabirinto() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Pulisce il canvas
+
+
+        for (let i = 0; i < labirinto.length; i++) {
+            for (let j = 0; j < labirinto[i].length; j++) {
+                if (labirinto[i][j] === '1') {
+                    ctx.fillStyle = 'lime'; // Colore lime per i muri
+                    ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+    }
+
+
+    // Funzione per disegnare la pallina
+    function disegnaPallina() {
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'lime';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+
+    // Funzione di movimento della pallina
+    function aggiorna() {
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+
+
+        // Controllo se la pallina tocca un muro e distrugge il muro
+        const col = Math.floor(ball.x / cellSize);
+        const row = Math.floor(ball.y / cellSize);
+
+
+        if (labirinto[row] && labirinto[row][col] === '1') {
+            // Distrugge il muro (lo rende 0)
+            labirinto[row] = labirinto[row].substring(0, col) + '0' + labirinto[row].substring(col + 1);
+        }
+
+
+        // Rimbalzo sui bordi del canvas
+        if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= canvas.width) {
+            ball.dx = -ball.dx; // Rimbalza orizzontalmente
+        }
+
+
+        if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= canvas.height) {
+            ball.dy = -ball.dy; // Rimbalza verticalmente
+        }
+
+
+        disegnaLabirinto(); // Ridisegna il labirinto
+        disegnaPallina(); // Ridisegna la pallina
+
+
+        requestAnimationFrame(aggiorna); // Chiamata ricorsiva
+    }
+
+
+    // Funzione per iniziare il movimento della pallina quando tocchi lo schermo
+    canvas.addEventListener('touchstart', function(event) {
+        const touchX = event.touches[0].clientX;
+
+
+        if (touchX > canvas.width / 2) {
+            ball.dx = Math.abs(ball.dx); // Se tocchi a destra, la pallina va a destra
+        } else {
+            ball.dx = -Math.abs(ball.dx); // Se tocchi a sinistra, la pallina va a sinistra
+        }
+
+
+        aggiorna(); // Avvia il movimento della pallina
+    });
+
+
+    aggiorna(); // Avvia il movimento iniziale della pallina
+</script>
+
+
+</body>
+</html>
+
