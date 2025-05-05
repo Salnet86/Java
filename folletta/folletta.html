@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labirinto con Folletta</title>
+  <style>
+    canvas {
+      background: #fff;
+      display: block;
+      margin: auto;
+    }
+    body{
+      background-color: blue;
+    }
+
+
+  </style>
+</head>
+<body>
+               <h1 style="text-align: center;color: lime;">ITIS GRASSI GIOCO FOLLETTA</h1>
+                <br>
+                <p style="text-align: center;color: lime;">Questo e un gioco fatto con gli studenti dell'istituto GRASSI  </p>
+                <p style="text-align: center;color: lime;">Collaborazione con i docenti abbiamo sviluppato tutta la classe questo gioco della folletta bisogna muovere le frecce della tastiera</p>
+                <br>
+<canvas id="canvas1" width="800" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas1');
+const ctx = canvas.getContext('2d');
+
+const sprite = new Image();
+sprite.src = "s.jpg"; // l'immagine sprite caricata
+
+let frameW, frameH;
+let x = 50, y = 50; // posizione iniziale
+let frameX = 0, frameY = 2; // cammina a destra
+let keys = [];
+
+// Disegniamo il labirinto
+const maze = [
+  { x1: 0, y1: 0, x2: 800, y2: 0 }, // parte superiore
+  { x1: 0, y1: 0, x2: 0, y2: 500 }, // parte sinistra
+  { x1: 800, y1: 0, x2: 800, y2: 500 }, // parte destra
+  { x1: 0, y1: 500, x2: 800, y2: 500 }, // parte inferiore
+  { x1: 200, y1: 0, x2: 200, y2: 400 }, // parete verticale
+  { x1: 400, y1: 100, x2: 600, y2: 100 }, // parete orizzontale
+  { x1: 400, y1: 300, x2: 600, y2: 300 }, // altra parete orizzontale
+  { x1: 600, y1: 100, x2: 600, y2: 200 }  // parete verticale
+];
+
+let frameSpeed = 8; // Velocità dell'animazione del frame
+let moveSpeed = 2; // Velocità di movimento del personaggio
+
+sprite.onload = () => {
+  frameW = sprite.width / 4;
+  frameH = sprite.height / 4;
+  requestAnimationFrame(loop);
+};
+
+document.addEventListener('keydown', e => keys[e.key] = true);
+document.addEventListener('keyup', e => keys[e.key] = false);
+
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Disegna il labirinto
+  ctx.beginPath();
+  maze.forEach(line => {
+    ctx.moveTo(line.x1, line.y1);
+    ctx.lineTo(line.x2, line.y2);
+  });
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  
+  // Movimenti del personaggio
+  const speed = 2;
+
+  if (keys["ArrowRight"] && x + speed + frameW <= canvas.width - 4) {
+    x += speed; 
+    frameY = 2; 
+    frameX = (frameX + 1) % 4;
+  }
+  else if (keys["ArrowLeft"] && x - speed >= 4) {
+    x -= speed; 
+    frameY = 1; 
+    frameX = (frameX + 1) % 4;
+  }
+  else if (keys["ArrowUp"] && y - speed >= 4) {
+    y -= speed; 
+    frameY = 3; 
+    frameX = (frameX + 1) % 4;
+  }
+  else if (keys["ArrowDown"] && y + speed + frameH <= canvas.height - 4) {
+    y += speed; 
+    frameY = 0; 
+    frameX = (frameX + 1) % 4;
+  }
+
+  // Assicurarsi che il personaggio non passi attraverso le pareti
+  checkCollision();
+
+  // Disegna il personaggio
+  ctx.drawImage(sprite, frameX * frameW, frameY * frameH, frameW, frameH, x, y, frameW, frameH);
+  
+  requestAnimationFrame(loop);
+}
+
+function checkCollision() {
+  maze.forEach(line => {
+    if (x + frameW > line.x1 && x < line.x2 && y + frameH > line.y1 && y < line.y2) {
+      switch (true) {
+        case (line.x1 === line.x2): // Parete verticale
+          x = (x < line.x1) ? line.x1 - frameW : line.x1 + 4;
+          break;
+        case (line.y1 === line.y2): // Parete orizzontale
+          y = (y < line.y1) ? line.y1 - frameH : line.y1 + 4;
+          break;
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

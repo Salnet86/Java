@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Omino semplice</title>
+  <style>
+    canvas {
+      background: #fff;
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas1" width="800" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas1');
+const ctx = canvas.getContext('2d');
+
+const sprite = new Image();
+sprite.src = "s.jpg"; // l'immagine sprite caricata
+
+let frameW, frameH;
+let x = 300, y = 200;
+let frameX = 0, frameY = 2; // cammina a destra
+let keys = [];
+
+sprite.onload = () => {
+  frameW = sprite.width / 4;
+  frameH = sprite.height / 4;
+  requestAnimationFrame(loop);
+};
+
+document.addEventListener('keydown', e => keys[e.key] = true);
+document.addEventListener('keyup', e => keys[e.key] = false);
+
+function loop() {
+  const speed = 2;
+
+  if (keys["ArrowRight"] && x + speed < canvas.width - frameW) {
+    x += speed; frameY = 2; frameX = (frameX + 1) % 2;
+  }
+  else if (keys["ArrowLeft"] && x - speed > 0) {
+    x -= speed; frameY = 1; frameX = (frameX + 1) % 4;
+  }
+  else if (keys["ArrowUp"] && y - speed > 0) {
+    y -= speed; frameY = 3; frameX = (frameX + 1) % 4;
+  }
+  else if (keys["ArrowDown"] && y + speed < canvas.height - frameH) {
+    y += speed; frameY = 0; frameX = (frameX + 1) % 4;
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(sprite, frameX * frameW, frameY * frameH, frameW, frameH, x, y, frameW, frameH);
+
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
