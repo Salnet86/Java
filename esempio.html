@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Labirinto con Collisioni</title>
+  <style>
+    canvas {
+      border: 2px solid black;
+      display: block;
+      margin: 20px auto;
+      background-color: #eee;
+    }
+    .controls {
+      text-align: center;
+    }
+    .controls button {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="400"></canvas>
+<div class="controls">
+  <div><button id="up">↑</button></div>
+  <div>
+    <button id="left">←</button>
+    <button id="down">↓</button>
+    <button id="right">→</button>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const tileSize = 40;
+
+  // Mappa del labirinto (10x10)
+  const map = [
+    [0,1,1,1,1,1,1,1,1,1],
+    [0,0,0,0,0,1,0,0,0,1],
+    [1,1,1,1,0,1,0,1,0,1],
+    [1,0,0,1,0,0,0,1,0,1],
+    [1,0,1,1,1,1,1,1,0,1],
+    [1,0,1,0,0,0,0,0,0,1],
+    [1,0,1,0,1,1,1,1,1,1],
+    [1,0,1,0,0,0,0,0,0,1],
+    [1,0,0,0,1,1,1,1,0,1],
+    [1,1,1,1,1,1,1,1,0,0]
+  ];
+
+  const player = {
+    x: 0,
+    y: 0,
+    size: tileSize,
+    color: "blue"
+  };
+
+  const move = { up: false, down: false, left: false, right: false };
+
+  function canMove(x, y) {
+    const tileX = Math.floor(x / tileSize);
+    const tileY = Math.floor(y / tileSize);
+    const tileX2 = Math.floor((x + player.size - 1) / tileSize);
+    const tileY2 = Math.floor((y + player.size - 1) / tileSize);
+
+    return (
+      map[tileY] && map[tileY][tileX] === 0 &&
+      map[tileY2] && map[tileY2][tileX2] === 0
+    );
+  }
+
+  function update() {
+    const step = 2;
+    let newX = player.x;
+    let newY = player.y;
+
+    if (move.up) newY -= step;
+    if (move.down) newY += step;
+    if (move.left) newX -= step;
+    if (move.right) newX += step;
+
+    if (canMove(newX, player.y)) player.x = newX;
+    if (canMove(player.x, newY)) player.y = newY;
+  }
+
+  function drawMap() {
+    for (let y = 0; y < map.length; y++) {
+      for (let x = 0; x < map[y].length; x++) {
+        if (map[y][x] === 1) {
+          ctx.fillStyle = "black";
+          ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+        }
+      }
+    }
+  }
+
+  function drawPlayer() {
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawMap();
+    drawPlayer();
+  }
+
+  function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+
+  function startMove(dir) { move[dir] = true; }
+  function stopMove(dir) { move[dir] = false; }
+
+  function bindButton(id, dir) {
+    const btn = document.getElementById(id);
+    btn.addEventListener("mousedown", () => startMove(dir));
+    btn.addEventListener("mouseup", () => stopMove(dir));
+    btn.addEventListener("mouseleave", () => stopMove(dir));
+    btn.addEventListener("touchstart", (e) => { e.preventDefault(); startMove(dir); });
+    btn.addEventListener("touchend", () => stopMove(dir));
+  }
+
+  bindButton("up", "up");
+  bindButton("down", "down");
+  bindButton("left", "left");
+  bindButton("right", "right");
+</script>
+</body>
+</html>

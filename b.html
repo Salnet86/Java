@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Labirinto con Arbitro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    #gameArea {
+      width: 200px;
+      height: 200px;
+      border: 2px solid black;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, 40px);
+      grid-template-rows: repeat(5, 40px);
+    }
+
+    .tile {
+      width: 40px;
+      height: 40px;
+      box-sizing: border-box;
+    }
+
+    .wall {
+      background-color: #333;
+    }
+
+    #player {
+      width: 40px;
+      height: 40px;
+      background-color: blue;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <div id="gameArea">
+      <!-- Qui i muri e gli spazi vuoti vengono creati tramite JavaScript -->
+    </div>
+    <div class="buttons">
+      <button onclick="move('up')">Su</button>
+      <button onclick="move('down')">Giù</button>
+      <button onclick="move('left')">Sinistra</button>
+      <button onclick="move('right')">Destra</button>
+    </div>
+  </div>
+
+  <script>
+    // Dimensione della cella (40px)
+    const tileSize = 40;
+
+    // Mappa del labirinto (0 = vuoto, 1 = muro)
+    const map = [
+      [0, 1, 0, 0, 0],
+      [0, 1, 0, 1, 0],
+      [0, 0, 0, 1, 0],
+      [0, 1, 0, 0, 0],
+      [0, 0, 0, 1, 0]
+    ];
+
+    // Posizione iniziale del giocatore
+    let playerX = 0;
+    let playerY = 0;
+
+    // Riferimento al contenitore del gioco
+    const gameArea = document.getElementById('gameArea');
+
+    // Funzione per creare la mappa
+    function createMap() {
+      // Creiamo le celle del labirinto
+      for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+          const tile = document.createElement('div');
+          tile.classList.add('tile');
+          if (map[y][x] === 1) {
+            tile.classList.add('wall'); // Aggiungi muro
+          }
+          gameArea.appendChild(tile);
+        }
+      }
+    }
+
+    // Funzione per verificare se il movimento è valido
+    function canMove(x, y) {
+      const tileX = Math.floor(x / tileSize);
+      const tileY = Math.floor(y / tileSize);
+      return map[tileY] && map[tileY][tileX] === 0;
+    }
+
+    // Funzione per muovere il giocatore
+    function move(direction) {
+      let newX = playerX;
+      let newY = playerY;
+
+      if (direction === 'up') newY -= tileSize;
+      if (direction === 'down') newY += tileSize;
+      if (direction === 'left') newX -= tileSize;
+      if (direction === 'right') newX += tileSize;
+
+      // Verifica se il movimento è valido
+      if (canMove(newX, newY)) {
+        playerX = newX;
+        playerY = newY;
+        updatePlayerPosition();
+      }
+    }
+
+    // Funzione per aggiornare la posizione del giocatore
+    function updatePlayerPosition() {
+      player.style.left = playerX + 'px';
+      player.style.top = playerY + 'px';
+    }
+
+    // Creiamo la mappa quando il documento è pronto
+    createMap();
+
+    // Aggiungiamo il giocatore al gioco
+    const player = document.createElement('div');
+    player.id = 'player';
+    gameArea.appendChild(player);
+    updatePlayerPosition(); // Inizializza la posizione del giocatore
+
+  </script>
+
+</body>
+</html>
